@@ -158,3 +158,39 @@ describe("renderJson", () => {
     expect(out).not.toMatch(ANSI);
   });
 });
+
+describe("AI summary in reports", () => {
+  const withSummary = {
+    ...mixed,
+    aiSummary: {
+      model: "claude-opus-5-5",
+      summary: "The repo is partly ready. Context files are missing and tests are thin.",
+      priorities: ["Add a CLAUDE.md.", "Write more tests.", "Split big files."],
+    },
+  };
+
+  it("shows the summary and numbered priorities in the terminal", () => {
+    const out = renderTerminal(withSummary, { version: "1", color: false });
+    expect(out).toContain("AI summary (claude-opus-5-5)");
+    expect(out).toContain("  The repo is partly ready.");
+    expect(out).toMatch(/Priorities\n 1\. Add a CLAUDE\.md\.\n 2\. Write more tests\.\n 3\. Split big files\./);
+    expect(out.indexOf("AI summary")).toBeLessThan(out.indexOf("Top fixes"));
+  });
+
+  it("adds an AI summary section to markdown, noting no source code was sent", () => {
+    const md = renderMarkdown(withSummary, { version: "1" });
+    expect(md).toContain("## AI summary\n\nThe repo is partly ready.");
+    expect(md).toContain("**Priorities**\n\n1. Add a CLAUDE.md.\n2. Write more tests.\n3. Split big files.");
+    expect(md).toContain("_Written by claude-opus-5-5 from the scan results above. No source code was sent._");
+  });
+
+  it("includes aiSummary in JSON, and null without --llm", () => {
+    expect(JSON.parse(renderJson(withSummary, { version: "1" })).aiSummary).toEqual(withSummary.aiSummary);
+    expect(JSON.parse(renderJson(mixed, { version: "1" })).aiSummary).toBeNull();
+  });
+
+  it("leaves reports unchanged without a summary", () => {
+    expect(renderTerminal(mixed, { version: "1", color: false })).not.toContain("AI summary");
+    expect(renderMarkdown(mixed, { version: "1" })).not.toContain("## AI summary");
+  });
+});

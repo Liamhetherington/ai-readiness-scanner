@@ -29,6 +29,22 @@ export function renderMarkdown(result: ScanResult, options: ReportOptions): stri
     "",
   ];
 
+  if (result.aiSummary) {
+    const { model, summary, priorities } = result.aiSummary;
+    out.push(
+      "## AI summary",
+      "",
+      summary,
+      "",
+      "**Priorities**",
+      "",
+      ...priorities.map((p, i) => `${i + 1}. ${p}`),
+      "",
+      `_Written by ${model} from the scan results above. No source code was sent._`,
+      "",
+    );
+  }
+
   const fixes = topFixes(result.checks);
   out.push("## Top fixes", "");
   if (fixes.length === 0) out.push("Every check passed. Nothing to fix.");
