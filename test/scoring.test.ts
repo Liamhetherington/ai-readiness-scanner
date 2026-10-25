@@ -25,7 +25,7 @@ describe("runChecks", () => {
     expect(results).toHaveLength(ALL_CHECKS.length);
     for (const r of results) {
       expect(Object.keys(r).sort()).toEqual(
-        ["category", "finding", "fix", "id", "passed", "pointsEarned", "pointsPossible"].sort(),
+        ["category", "finding", "fix", "id", "passed", "pointsEarned", "pointsPossible", "title"].sort(),
       );
       expect(r.finding).toMatch(/\.$/);
       expect(r.fix).toMatch(/^[A-Z].*\.$/);
@@ -35,7 +35,7 @@ describe("runChecks", () => {
 
   it("clamps out-of-range outcomes", async () => {
     const [r] = await runChecks(contextFromFiles({}), [
-      { id: "x", category: "testing", points: 3, run: async () => ({ earned: 9, finding: "f.", fix: "F." }) },
+      { id: "x", title: "X", category: "testing", points: 3, run: async () => ({ earned: 9, finding: "f.", fix: "F." }) },
     ]);
     expect(r?.pointsEarned).toBe(3);
   });
@@ -43,6 +43,7 @@ describe("runChecks", () => {
 
 const result = (id: string, earned: number, possible: number, fix = `Fix ${id}.`): CheckResult => ({
   id,
+  title: id,
   category: "testing",
   passed: earned === possible,
   pointsEarned: earned,

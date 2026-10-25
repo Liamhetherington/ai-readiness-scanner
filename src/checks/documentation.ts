@@ -44,6 +44,7 @@ export function wordCount(text: string): number {
 
 export const readmeExists: Check = {
   id: "docs-readme",
+  title: "README exists",
   category: "documentation",
   points: 4,
   async run(ctx) {
@@ -56,6 +57,7 @@ export const readmeExists: Check = {
 
 export const readmeLength: Check = {
   id: "docs-readme-length",
+  title: "README length",
   category: "documentation",
   points: 4,
   async run(ctx) {
@@ -76,6 +78,7 @@ export const readmeLength: Check = {
 
 export const readmeSections: Check = {
   id: "docs-readme-sections",
+  title: "README covers setup, run and test",
   category: "documentation",
   points: 6,
   async run(ctx) {
@@ -105,6 +108,7 @@ export const readmeSections: Check = {
 
 export const docsFolder: Check = {
   id: "docs-folder",
+  title: "Docs folder",
   category: "documentation",
   points: 3,
   async run(ctx) {
@@ -117,6 +121,7 @@ export const docsFolder: Check = {
 
 export const decisionRecords: Check = {
   id: "docs-adr",
+  title: "Architecture decision records",
   category: "documentation",
   points: 3,
   async run(ctx) {

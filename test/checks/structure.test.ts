@@ -75,3 +75,10 @@ describe("structure checks with no source", () => {
     expect((await runCheck(check, { "README.md": "" })).earned).toBe(0);
   });
 });
+
+describe("structure-large-files wording", () => {
+  it("uses the singular for one large file", async () => {
+    const r = await runCheck(largeFiles, { "a.ts": lines(600), "b.ts": lines(10) });
+    expect(r.finding).toBe("1 of 2 source files is over 500 lines, the largest being a.ts (600).");
+  });
+});

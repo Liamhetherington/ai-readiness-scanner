@@ -23,6 +23,7 @@ export async function runChecks(ctx: ScanContext, checks: Check[] = ALL_CHECKS):
       const earned = Math.max(0, Math.min(check.points, outcome.earned));
       return {
         id: check.id,
+        title: check.title,
         category: check.category,
         passed: earned === check.points,
         pointsEarned: earned,

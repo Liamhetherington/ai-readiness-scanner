@@ -1,23 +1,20 @@
 #!/usr/bin/env node
-import { readFileSync, realpathSync, statSync } from "node:fs";
+import { realpathSync, statSync } from "node:fs";
+import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Command, Option } from "commander";
+import { render } from "./report/index.js";
+import { shouldColor } from "./report/terminal.js";
 import { scan } from "./scan.js";
-import { topFixes } from "./scoring.js";
-
-export type OutputFormat = "terminal" | "md" | "json";
+import type { OutputFormat } from "./types.js";
+import { packageVersion } from "./version.js";
 
 export interface CliOptions {
   repoPath: string;
   format: OutputFormat;
   out?: string;
   llm: boolean;
-}
-
-function packageVersion(): string {
-  const pkgPath = fileURLToPath(new URL("../package.json", import.meta.url));
-  return (JSON.parse(readFileSync(pkgPath, "utf8")) as { version: string }).version;
 }
 
 /** Parses argv (including the node and script entries) into options. Throws on invalid input. */
@@ -62,17 +59,29 @@ export async function run(argv: string[]): Promise<number> {
     return 1;
   }
 
-  const result = await scan(root);
+  if (options.llm) console.error("note: --llm is not implemented yet; showing the standard report.");
 
-  // Plain summary until the report formats land in milestone 3.
-  console.log(`Scanned ${result.fileCount} files in ${result.root} (${result.durationMs} ms)`);
-  console.log(`AI readiness score: ${result.score}/${result.maxScore}`);
-  for (const c of result.categories) console.log(`  ${c.label}: ${c.pointsEarned}/${c.pointsPossible}`);
-  const fixes = topFixes(result.checks);
-  if (fixes.length > 0) {
-    console.log("Top fixes:");
-    for (const f of fixes) console.log(`  +${f.pointsGained}  ${f.fix}`);
+  const result = await scan(root);
+  const report = render(result, options.format, {
+    version: packageVersion(),
+    // Files never get colour codes; stdout gets them only on a terminal.
+    color: !options.out && shouldColor(process.stdout),
+    width: process.stdout.columns,
+  });
+
+  if (!options.out) {
+    process.stdout.write(report);
+    return 0;
   }
+  const outPath = path.resolve(options.out);
+  try {
+    await mkdir(path.dirname(outPath), { recursive: true });
+    await writeFile(outPath, report);
+  } catch (err) {
+    console.error(`error: could not write ${options.out}: ${(err as Error).message}`);
+    return 1;
+  }
+  console.error(`Wrote ${options.format} report to ${options.out} (score ${result.score}/${result.maxScore})`);
   return 0;
 }
 
@@ -91,6 +100,11 @@ function isMainModule(): boolean {
 }
 
 if (isMainModule()) {
+  // The reader closed the pipe early (e.g. `| head`): stop quietly, like other Unix tools.
+  process.stdout.on("error", (err: NodeJS.ErrnoException) => {
+    if (err.code === "EPIPE") process.exit(0);
+    throw err;
+  });
   run(process.argv).then((code) => {
     process.exitCode = code;
   });

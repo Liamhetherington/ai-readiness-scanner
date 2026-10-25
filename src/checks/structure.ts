@@ -13,6 +13,7 @@ const dirDepth = (file: string) => file.split("/").length - 1;
 
 export const largeFiles: Check = {
   id: "structure-large-files",
+  title: "Files over 500 lines",
   category: "structure",
   points: 8,
   async run(ctx) {
@@ -27,7 +28,7 @@ export const largeFiles: Check = {
     const worst = large.slice(0, 3).map(([f, n]) => `${f} (${n})`).join(", ");
     return {
       earned,
-      finding: `${large.length} of ${counts.size} source files are over ${LARGE_FILE_LINES} lines, the largest being ${worst}.`,
+      finding: `${large.length} of ${counts.size} source files ${large.length === 1 ? "is" : "are"} over ${LARGE_FILE_LINES} lines, the largest being ${worst}.`,
       fix: "Split the largest files into smaller modules with one responsibility each, so agents can load only what they need.",
     };
   },
@@ -35,6 +36,7 @@ export const largeFiles: Check = {
 
 export const averageFileLength: Check = {
   id: "structure-average-length",
+  title: "Average file length",
   category: "structure",
   points: 6,
   async run(ctx) {
@@ -55,6 +57,7 @@ export const averageFileLength: Check = {
 
 export const folderNesting: Check = {
   id: "structure-nesting",
+  title: "Folder nesting depth",
   category: "structure",
   points: 6,
   async run(ctx) {

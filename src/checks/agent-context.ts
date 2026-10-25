@@ -10,6 +10,7 @@ const presentContextFiles = (ctx: ScanContext) => CONTEXT_FILES.filter((f) => ct
 
 export const contextFilePresent: Check = {
   id: "agent-context-file",
+  title: "Agent context file present",
   category: "agent-context",
   points: 10,
   async run(ctx) {
@@ -31,6 +32,7 @@ export const contextFilePresent: Check = {
 
 export const contextFileMeaningful: Check = {
   id: "agent-context-content",
+  title: "Agent context has meaningful content",
   category: "agent-context",
   points: 10,
   async run(ctx) {

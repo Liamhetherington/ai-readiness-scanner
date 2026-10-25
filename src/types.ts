@@ -1,5 +1,7 @@
 import type { ScanContext } from "./context.js";
 
+export type OutputFormat = "terminal" | "md" | "json";
+
 export type Category = "agent-context" | "testing" | "types-linting" | "documentation" | "structure";
 
 export const CATEGORIES: { id: Category; label: string; points: number }[] = [
@@ -12,6 +14,8 @@ export const CATEGORIES: { id: Category; label: string; points: number }[] = [
 
 export interface CheckResult {
   id: string;
+  /** Short human-readable name for reports. */
+  title: string;
   category: Category;
   passed: boolean;
   pointsEarned: number;
@@ -31,6 +35,7 @@ export interface CheckOutcome {
 
 export interface Check {
   id: string;
+  title: string;
   category: Category;
   points: number;
   run(ctx: ScanContext): Promise<CheckOutcome>;
