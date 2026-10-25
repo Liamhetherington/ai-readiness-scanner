@@ -6,8 +6,8 @@ import { fileURLToPath } from "node:url";
 import { Command, Option } from "commander";
 import { render } from "./report/index.js";
 import { shouldColor } from "./report/terminal.js";
-import { scan } from "./scan.js";
-import type { OutputFormat } from "./types.js";
+import { scan, type ScanResult } from "./scan.js";
+import type { AiSummary, OutputFormat } from "./types.js";
 import { packageVersion } from "./version.js";
 
 export interface CliOptions {
@@ -59,9 +59,9 @@ export async function run(argv: string[]): Promise<number> {
     return 1;
   }
 
-  if (options.llm) console.error("note: --llm is not implemented yet; showing the standard report.");
-
   const result = await scan(root);
+  if (options.llm) result.aiSummary = await tryAiSummary(result);
+
   const report = render(result, options.format, {
     version: packageVersion(),
     // Files never get colour codes; stdout gets them only on a terminal.
@@ -83,6 +83,24 @@ export async function run(argv: string[]): Promise<number> {
   }
   console.error(`Wrote ${options.format} report to ${options.out} (score ${result.score}/${result.maxScore})`);
   return 0;
+}
+
+/** Adds the AI summary, or explains on stderr why it couldn't. Never fails the run. */
+async function tryAiSummary(result: ScanResult): Promise<AiSummary | undefined> {
+  // Loaded only for --llm, so plain scans never pay for the SDK.
+  const llm = await import("./llm/summary.js");
+  if (!llm.hasApiKey()) {
+    console.error(`warning: ${llm.MISSING_KEY_MESSAGE}`);
+    return undefined;
+  }
+  if (process.stderr.isTTY) console.error(`Asking ${llm.SUMMARY_MODEL} for a summary (scan results only, no source code)...`);
+  try {
+    return await llm.summarize(result);
+  } catch (err) {
+    if (!(err instanceof llm.LlmSummaryError)) throw err;
+    console.error(`warning: AI summary unavailable: ${err.message} The report below is complete without it.`);
+    return undefined;
+  }
 }
 
 function isDirectory(p: string): boolean {
