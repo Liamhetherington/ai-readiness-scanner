@@ -1,5 +1,7 @@
 import type { ScanContext } from "./context.js";
 
+export type OutputFormat = "terminal" | "md" | "json";
+
 export type Category = "agent-context" | "testing" | "types-linting" | "documentation" | "structure";
 
 export const CATEGORIES: { id: Category; label: string; points: number }[] = [
