@@ -42,6 +42,19 @@ export function renderTerminal(result: ScanResult, options: TerminalOptions): st
     out.push(`${c.label.padEnd(labelWidth)}${bar}  ${points}`);
   }
 
+  if (result.aiSummary) {
+    const { model, summary, priorities } = result.aiSummary;
+    out.push("", `${paint("bold", "AI summary")} ${paint("dim", `(${model})`)}`);
+    for (const line of wrap(summary, width - 2)) out.push(`  ${line}`);
+    out.push("", paint("bold", "Priorities"));
+    priorities.forEach((p, i) => {
+      const prefix = `${String(i + 1).padStart(2)}. `;
+      const [first = "", ...rest] = wrap(p, width - prefix.length);
+      out.push(prefix + first);
+      for (const line of rest) out.push(" ".repeat(prefix.length) + line);
+    });
+  }
+
   const fixes = topFixes(result.checks);
   out.push("");
   if (fixes.length === 0) {

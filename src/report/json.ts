@@ -1,6 +1,6 @@
 import type { ScanResult } from "../scan.js";
 import { topFixes, type CategoryScore, type FixSuggestion } from "../scoring.js";
-import type { CheckResult } from "../types.js";
+import type { AiSummary, CheckResult } from "../types.js";
 import { rating, repoName, type ReportOptions } from "./shared.js";
 
 /** Bump when a field is removed or changes meaning, so CI consumers can detect it. */
@@ -17,6 +17,8 @@ export interface JsonReport {
   categories: CategoryScore[];
   topFixes: FixSuggestion[];
   checks: CheckResult[];
+  /** Present only with --llm; null otherwise. */
+  aiSummary: AiSummary | null;
 }
 
 export function toJsonReport(result: ScanResult, options: ReportOptions): JsonReport {
@@ -31,6 +33,7 @@ export function toJsonReport(result: ScanResult, options: ReportOptions): JsonRe
     categories: result.categories,
     topFixes: topFixes(result.checks),
     checks: result.checks,
+    aiSummary: result.aiSummary ?? null,
   };
 }
 

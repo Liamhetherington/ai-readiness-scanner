@@ -12,6 +12,15 @@ export const CATEGORIES: { id: Category; label: string; points: number }[] = [
   { id: "structure", label: "Code structure", points: 20 },
 ];
 
+/** The optional AI-written summary added by --llm. */
+export interface AiSummary {
+  model: string;
+  /** About 150 words on where the repo stands. */
+  summary: string;
+  /** The three most important things to do next, most important first. */
+  priorities: string[];
+}
+
 export interface CheckResult {
   id: string;
   /** Short human-readable name for reports. */

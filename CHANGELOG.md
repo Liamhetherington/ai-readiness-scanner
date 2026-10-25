@@ -6,6 +6,33 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-25
+
+Milestone 4: AI summary.
+
+### Added
+
+- `--llm` adds an AI-written summary of about 150 words and the top three
+  priorities to every report format, using Claude Opus 5.5 (`claude-opus-5-5`)
+  through the official Anthropic SDK.
+- Only scan results are sent: scores, check outcomes, the one-sentence findings
+  and fixes, and the repository's folder name. No source code, file contents or
+  absolute paths are sent; a test checks every line of every fixture file
+  against the request.
+- Server-side refusal fallback (`fallbacks: "default"`): if a safety classifier
+  declines, the request is retried on Anthropic's recommended fallback model,
+  and reports name the model that answered.
+- Clear handling when `ANTHROPIC_API_KEY` is missing or the API call fails: a
+  one-line warning on stderr, and the full report still prints with exit code 0.
+- `aiSummary` field in the JSON report, `null` without `--llm`.
+
+### Changed
+
+- The Anthropic SDK is loaded only when `--llm` is used, so plain scans start
+  as fast as before.
+- The `@types/node` dev dependency is raised to v22 to match vitest's peer
+  range. The runtime requirement is still Node.js 20 or newer.
+
 ## [0.3.0] - 2026-10-24
 
 Milestone 3: reports.
@@ -82,7 +109,8 @@ Milestone 1: scaffold.
 - Runs on Node.js 20 and newer, and through `npx`.
 - MIT license.
 
-[Unreleased]: https://github.com/Liamhetherington/ai-readiness-scanner/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/Liamhetherington/ai-readiness-scanner/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/Liamhetherington/ai-readiness-scanner/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/Liamhetherington/ai-readiness-scanner/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/Liamhetherington/ai-readiness-scanner/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/Liamhetherington/ai-readiness-scanner/releases/tag/v0.1.0
