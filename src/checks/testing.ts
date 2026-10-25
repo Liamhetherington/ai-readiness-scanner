@@ -10,6 +10,7 @@ const NPM_DEFAULT_TEST = /no test specified/;
 
 export const testFilesExist: Check = {
   id: "testing-files",
+  title: "Test files exist",
   category: "testing",
   points: 7,
   async run(ctx) {
@@ -46,6 +47,7 @@ export async function findTestCommand(ctx: ScanContext): Promise<string | undefi
 
 export const testCommandDefined: Check = {
   id: "testing-command",
+  title: "Test command defined",
   category: "testing",
   points: 6,
   async run(ctx) {
@@ -67,6 +69,7 @@ export const testCommandDefined: Check = {
 
 export const testRatio: Check = {
   id: "testing-ratio",
+  title: "Test to source ratio",
   category: "testing",
   points: 6,
   async run(ctx) {
@@ -95,6 +98,7 @@ export const testRatio: Check = {
 
 export const ciRunsTests: Check = {
   id: "testing-ci",
+  title: "CI runs tests",
   category: "testing",
   points: 6,
   async run(ctx) {

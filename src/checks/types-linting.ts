@@ -111,6 +111,7 @@ async function scorePythonTypes(ctx: ScanContext, points: number) {
 
 export const strictTypes: Check = {
   id: "types-strict",
+  title: "Strict type checking",
   category: "types-linting",
   points: 6,
   async run(ctx) {
@@ -150,6 +151,7 @@ export async function findLinter(ctx: ScanContext, lang: Language): Promise<stri
 
 export const linterConfig: Check = {
   id: "types-linter",
+  title: "Linter configured",
   category: "types-linting",
   points: 5,
   async run(ctx) {
@@ -194,6 +196,7 @@ export async function findFormatter(ctx: ScanContext, lang: Language): Promise<s
 
 export const formatterConfig: Check = {
   id: "types-formatter",
+  title: "Formatter configured",
   category: "types-linting",
   points: 4,
   async run(ctx) {

@@ -13,6 +13,7 @@ const dirDepth = (file: string) => file.split("/").length - 1;
 
 export const largeFiles: Check = {
   id: "structure-large-files",
+  title: "Files over 500 lines",
   category: "structure",
   points: 8,
   async run(ctx) {
@@ -35,6 +36,7 @@ export const largeFiles: Check = {
 
 export const averageFileLength: Check = {
   id: "structure-average-length",
+  title: "Average file length",
   category: "structure",
   points: 6,
   async run(ctx) {
@@ -55,6 +57,7 @@ export const averageFileLength: Check = {
 
 export const folderNesting: Check = {
   id: "structure-nesting",
+  title: "Folder nesting depth",
   category: "structure",
   points: 6,
   async run(ctx) {
