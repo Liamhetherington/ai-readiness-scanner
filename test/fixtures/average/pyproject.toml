@@ -1,0 +1,7 @@
+[project]
+name = "weather-cli"
+version = "0.3.0"
+dependencies = ["httpx"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
