@@ -1,0 +1,11 @@
+{
+  "name": "invoice-service",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "format": "prettier --check ."
+  }
+}

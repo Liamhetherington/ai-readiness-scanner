@@ -1,0 +1,9 @@
+{
+  // Strict settings: see docs/adr/0001-use-typescript-strict.md
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "strict": true,
+  },
+  "include": ["src/**/*", "tests/**/*"],
+}
