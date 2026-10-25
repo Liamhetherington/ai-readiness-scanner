@@ -28,7 +28,7 @@ export const largeFiles: Check = {
     const worst = large.slice(0, 3).map(([f, n]) => `${f} (${n})`).join(", ");
     return {
       earned,
-      finding: `${large.length} of ${counts.size} source files are over ${LARGE_FILE_LINES} lines, the largest being ${worst}.`,
+      finding: `${large.length} of ${counts.size} source files ${large.length === 1 ? "is" : "are"} over ${LARGE_FILE_LINES} lines, the largest being ${worst}.`,
       fix: "Split the largest files into smaller modules with one responsibility each, so agents can load only what they need.",
     };
   },
