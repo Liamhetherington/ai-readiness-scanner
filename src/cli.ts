@@ -3,7 +3,8 @@ import { readFileSync, realpathSync, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Command, Option } from "commander";
-import { walkRepo } from "./walker.js";
+import { scan } from "./scan.js";
+import { topFixes } from "./scoring.js";
 
 export type OutputFormat = "terminal" | "md" | "json";
 
@@ -61,11 +62,17 @@ export async function run(argv: string[]): Promise<number> {
     return 1;
   }
 
-  const started = performance.now();
-  const { files } = await walkRepo(root);
-  const elapsedMs = Math.round(performance.now() - started);
+  const result = await scan(root);
 
-  console.log(`Scanned ${files.length} files in ${root} (${elapsedMs} ms)`);
+  // Plain summary until the report formats land in milestone 3.
+  console.log(`Scanned ${result.fileCount} files in ${result.root} (${result.durationMs} ms)`);
+  console.log(`AI readiness score: ${result.score}/${result.maxScore}`);
+  for (const c of result.categories) console.log(`  ${c.label}: ${c.pointsEarned}/${c.pointsPossible}`);
+  const fixes = topFixes(result.checks);
+  if (fixes.length > 0) {
+    console.log("Top fixes:");
+    for (const f of fixes) console.log(`  +${f.pointsGained}  ${f.fix}`);
+  }
   return 0;
 }
 
