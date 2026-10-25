@@ -6,6 +6,33 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-24
+
+Milestone 3: reports.
+
+### Added
+
+- Terminal report with the overall score and rating, a bar for each category,
+  and the top five fixes ranked by points gained. Long fixes wrap to the
+  terminal width.
+- Colour in the terminal report, following the TTY and the `NO_COLOR` and
+  `FORCE_COLOR` conventions.
+- Markdown report (`--format md`) with the summary plus every check, grouped by
+  category, showing status, points, finding and fix.
+- JSON report (`--format json`) with the full structured result and a
+  `schemaVersion` field so CI consumers can detect breaking changes.
+- `--out <file>` writes any format to a file, creating parent folders, and
+  confirms on stderr so stdout stays clean. Files never contain colour codes.
+- Ratings: "Ready for AI agents" (80 and above), "Partly ready" (50 to 79) and
+  "Not ready" (below 50).
+- A human-readable `title` on every check and check result.
+
+### Fixed
+
+- The large-file finding now says "1 of N source files is" instead of "are".
+- The CLI exits quietly instead of crashing when its output pipe is closed
+  early, for example `ai-readiness . | head`.
+
 ## [0.2.0] - 2026-10-24
 
 Milestone 2: checks and scoring.
@@ -55,6 +82,7 @@ Milestone 1: scaffold.
 - Runs on Node.js 20 and newer, and through `npx`.
 - MIT license.
 
-[Unreleased]: https://github.com/Liamhetherington/ai-readiness-scanner/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/Liamhetherington/ai-readiness-scanner/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/Liamhetherington/ai-readiness-scanner/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/Liamhetherington/ai-readiness-scanner/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/Liamhetherington/ai-readiness-scanner/releases/tag/v0.1.0
